@@ -1,6 +1,5 @@
-# 🟡 Projet 4 — Système de messagerie asynchrone avec file d'attente
+## Projet 4 — Système de messagerie asynchrone avec file d'attente
 
-> **Statut** : À construire | **Niveau** : Intermédiaire | **Durée** : 4 semaines
 
 ## Objectif
 Concevoir un système où plusieurs services communiquent de façon asynchrone via
