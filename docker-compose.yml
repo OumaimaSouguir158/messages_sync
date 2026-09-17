@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    ports:
+      - "5672:5672"   # AMQP
+      - "15672:15672" # UI de gestion
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks: [msgnet]
+
+  producer:
+    build: ./producer
+    ports: ["3000:3000"]
+    environment:
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    networks: [msgnet]
+
+  worker-email:
+    build: ./consumers/email-worker
+    environment:
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
+      WORKER_NAME: email-worker
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    networks: [msgnet]
+
+  worker-report:
+    build: ./consumers/report-worker
+    environment:
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
+      WORKER_NAME: report-worker
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    networks: [msgnet]
+
+networks:
+  msgnet:
+    driver: bridge
